@@ -1,1 +1,84 @@
-/* You can add global styles to this file, and also import other style files */
+/* ========== VARIABLES ========== */
+:root {
+  --primary: hsl(0, 0%, 17%);
+  --accent: hsl(0, 0%, 59%);
+
+  --font-family: "Rubik", sans-serif;
+  --normal-font-size: 1.125rem;
+
+  --border-radius: 12px;
+  --box-shadow: 8px 8px 24px rgba(149, 157, 165, 0.2);
+}
+
+/* ========== RESET ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--normal-font-size);
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ========== THEME ========== */
+input {
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 15px 20px;
+  font-family: var(--font-family);
+  font-size: 14px;
+
+  &::placeholder {
+    letter-spacing: 0.5px;
+    color: var(--accent);
+  }
+}
+
+/* ========== BREAKPOINTS MIXINS ========== */
+@mixin xs {
+  @media (max-width: 350px) {
+    @content;
+  }
+}
+
+@mixin sm {
+  @media (max-width: 576px) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin xl {
+  @media (max-width: 992px) {
+    @content;
+  }
+}
+
+/* ========== UTILS ========== */
+.separator {
+  height: 50px;
+  width: 1px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
