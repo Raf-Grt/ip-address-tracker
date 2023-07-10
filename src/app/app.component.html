@@ -7,9 +7,9 @@
         class="tracker__form--input"
         placeholder="Search for any IP adress or domain"
         [(ngModel)]="inputValue"
-        (keydown.enter)="logData()"
+        (keydown.enter)="getLocation()"
       />
-      <button class="tracker__form--btn" type="button" (click)="logData()">
+      <button class="tracker__form--btn" type="button" (click)="getLocation()">
         <span class="tracker__form--arrow"></span>
       </button>
     </div>
@@ -17,22 +17,27 @@
       <ul class="tracker__results--list">
         <li class="tracker__results--card">
           <p class="tracker__results--type">IP ADDRESS</p>
-          <p class="tracker__results--data">192.212.174.101</p>
+          <p class="tracker__results--data">{{ locationData?.ip }}</p>
         </li>
         <div class="separator"></div>
         <li class="tracker__results--card">
           <p class="tracker__results--type">LOCATION</p>
-          <p class="tracker__results--data">Brooklyn, NY 10001</p>
+          <p class="tracker__results--data">
+            {{ locationData?.location?.city }},
+            {{ locationData?.location?.region }}
+          </p>
         </li>
         <div class="separator"></div>
         <li class="tracker__results--card">
           <p class="tracker__results--type">TIMEZONE</p>
-          <p class="tracker__results--data">UTC -05:00</p>
+          <p class="tracker__results--data">
+            {{ locationData?.location?.timezone }}
+          </p>
         </li>
         <div class="separator"></div>
         <li class="tracker__results--card">
           <p class="tracker__results--type">ISP</p>
-          <p class="tracker__results--data">SpaceX Starlink</p>
+          <p class="tracker__results--data">{{ locationData?.isp }}</p>
         </li>
       </ul>
     </div>

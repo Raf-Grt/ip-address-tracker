@@ -42,3 +42,5 @@ testem.log
 Thumbs.db
 
 ip-address-tracker-master
+environment.prod.ts
+environment.ts
