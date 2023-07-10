@@ -12,6 +12,9 @@
       <button class="tracker__form--btn" type="button" (click)="getLocation()">
         <span class="tracker__form--arrow"></span>
       </button>
+      <p class="tracker__form--error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </p>
     </div>
     <div class="tracker__results">
       <ul class="tracker__results--list">

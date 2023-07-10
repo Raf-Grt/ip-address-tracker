@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+
+import { IpService } from './shared/services/ip.service';
+import { MapService } from './shared/services/map.service';
+
 import { IpLocation } from './shared/interfaces/location.interface';
-import { environment } from '../../environment';
-import * as L from 'leaflet';
 
 @Component({
   selector: 'app-root',
@@ -11,80 +12,77 @@ import * as L from 'leaflet';
 })
 export class AppComponent implements OnInit {
   public inputValue: string = '';
-  private ipV4AdressRegex: RegExp = /^(?:[0-9]{1,3}.){3}[0-9]{1,3}$/gm;
+  private ipV4AdressRegex: RegExp = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/gm;
 
   private clientIpAddress: string = '';
   private firstLogin: boolean = true;
 
-  private map!: L.Map;
   public locationData: IpLocation | undefined;
+  public errorMessage: string = '';
 
-  private API_URL = environment.apiUrl;
-
-  private customMarker = L.icon({
-    iconUrl: 'assets/images/icon-location.svg',
-    iconSize: [50, 60],
-    iconAnchor: [25, 60],
-    popupAnchor: [0, 0],
-  });
-
-  constructor(private http: HttpClient) {}
+  constructor(private ipService: IpService, private mapService: MapService) {}
 
   ngOnInit(): void {
-    this.map = L.map('map', { zoomControl: false });
-    L.tileLayer(
-      'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png',
-      {
-        attribution:
-          '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
-      }
-    ).addTo(this.map);
+    // Create the Leaflet map
+    this.mapService.createMap('map', { zoomControl: false });
+    // Add the tile layer to the map
+    this.mapService.addTileLayer();
+    // Retrieve the client's IP address
     this.getClientIpAddress();
   }
 
   private getClientIpAddress(): void {
-    this.http
-      .get('https://api.ipify.org?format=json')
-      .subscribe((response: any) => {
-        this.clientIpAddress = response.ip;
-        if (this.clientIpAddress) {
-          this.getIpAddressData(this.clientIpAddress);
-        }
-      });
+    // Use the IpService to retrieve the client's IP address
+    this.ipService.getClientIpAddress().subscribe((clientIp: string) => {
+      this.clientIpAddress = clientIp;
+      if (this.clientIpAddress) {
+        // Get the location data for the IP address
+        this.getIpAddressData(this.clientIpAddress);
+      }
+    });
   }
 
   private getIpAddressData(ipAddress: string): void {
-    this.http
-      .get<IpLocation>(this.API_URL + ipAddress)
-      .subscribe((response) => {
+    // Use the IpService to get the location data for the specified IP address
+    this.ipService.getIpAddressData(ipAddress).subscribe(
+      (response: IpLocation) => {
         this.locationData = response;
         if (this.locationData.location) {
+          // Set the map view to the specified location coordinates
           this.setMapView(
             this.locationData.location.lat,
             this.locationData.location.lng
           );
         }
-      });
+      },
+      (error: any) => {
+        this.errorMessage =
+          'Error occurred while fetching location data. Try again later';
+      }
+    );
   }
 
   private setMapView(x: number, y: number): void {
-    this.map.setView([x, y], 16);
+    // Set the map view to the specified coordinates
+    this.mapService.setView(x, y);
 
     if (this.firstLogin) {
-      L.marker([x, y], { icon: this.customMarker })
-        .addTo(this.map)
-        .bindPopup('Your location')
-        .openPopup();
+      // Add a marker to the map with a popup for the first login
+      this.mapService.addMarker(x, y).bindPopup('Your location').openPopup();
       this.firstLogin = false;
     } else {
-      L.marker([x, y], { icon: this.customMarker }).addTo(this.map);
+      // Simply add a marker to the map
+      this.mapService.addMarker(x, y);
     }
   }
 
   public getLocation(): void {
     if (this.inputValue.trim() && this.inputValue.match(this.ipV4AdressRegex)) {
+      // Get the location data for the specified IP address in input
       this.getIpAddressData(this.inputValue);
       this.inputValue = '';
+    } else {
+      this.errorMessage = 'Please, use a valid IPv4 address.';
     }
   }
 }

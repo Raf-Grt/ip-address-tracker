@@ -1,3 +1,5 @@
+@use "../assets/styles/breakpoints" as breakpoints;
+
 .tracker {
   &__form {
     position: relative;
@@ -52,6 +54,13 @@
       border-right: 2px solid #fff;
       transform: rotate(45deg);
     }
+
+    &--error-message {
+      position: absolute;
+      color: red;
+      font-size: 12px;
+      top: 55px;
+    }
   }
 
   &__results {
@@ -63,12 +72,22 @@
     box-shadow: var(--box-shadow);
     transform: translateY(50%);
 
+    @include breakpoints.lg {
+      transform: translateY(20%);
+    }
+
     &--list {
       display: flex;
       flex-flow: row nowrap;
       align-items: center;
       justify-content: space-between;
       gap: 30px;
+
+      @include breakpoints.lg {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+      }
     }
 
     &--type {
