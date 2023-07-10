@@ -40,7 +40,3 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
-
-ip-address-tracker-master
-environment.prod.ts
-environment.ts
